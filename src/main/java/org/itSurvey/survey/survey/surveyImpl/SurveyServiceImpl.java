@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -74,7 +75,9 @@ public class SurveyServiceImpl implements SurveyService {
 
         if(updateSurveyDTO.ownerId() != null) {
             Owner owner = ownerRepository.findByIdOrThrow(updateSurveyDTO.ownerId());
+            existingSurvey.getOwner().getSurveys().remove(existingSurvey);
             existingSurvey.setOwner(owner);
+            owner.getSurveys().add(existingSurvey);
         }
 
         surveyRepository.save(existingSurvey);
@@ -86,5 +89,11 @@ public class SurveyServiceImpl implements SurveyService {
         Survey survey = surveyRepository.findByIdOrThrow(id);
         surveyRepository.deleteById(id);
         return responseSurveyDTOMapper.toResponseSurveyDTO(survey);
+    }
+
+    @Override
+    public ResponseSurveyDTO results(Long id) {
+        Optional<Survey> survey = surveyRepository.findById(id);
+        return responseSurveyDTOMapper.toResponseSurveyDTO(survey.get());
     }
 }

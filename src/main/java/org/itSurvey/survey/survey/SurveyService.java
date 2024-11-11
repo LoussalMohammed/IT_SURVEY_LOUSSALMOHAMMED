@@ -12,4 +12,5 @@ public interface SurveyService {
     ResponseSurveyDTO updateSurveyById(UpdateSurveyDTO updateSurveyDTO, Long id);
     ResponseSurveyDTO findSurveyById(Long id);
     ResponseSurveyDTO deleteById(Long id);
+    ResponseSurveyDTO results(Long id);
 }

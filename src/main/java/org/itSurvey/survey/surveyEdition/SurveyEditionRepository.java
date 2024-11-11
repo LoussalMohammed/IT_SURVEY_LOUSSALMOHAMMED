@@ -10,8 +10,6 @@ public interface SurveyEditionRepository extends JpaRepository<SurveyEdition, Lo
 
     default SurveyEdition findByIdOrThrow(Long id) {
         return findById(id)
-                .orElseThrow(() -> {
-                    return new ResourceNotFoundException("Survey Edition Not Found Using Specified id!");
-                });
+                .orElseThrow(() -> new ResourceNotFoundException("Survey Edition Not Found Using Specified id!"));
     }
 }

@@ -2,9 +2,11 @@ package org.itSurvey.survey.surveyEdition;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.itSurvey.survey.subject.Subject;
 import org.itSurvey.survey.survey.Survey;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity(name = "SurvetEdition")
 @Table(name = "survetEditions")
@@ -29,12 +31,17 @@ public class SurveyEdition {
     @JoinColumn(name = "survey_id")
     private Survey survey;
 
-    public SurveyEdition(Long id, LocalDate creationDate, LocalDate startDate, @NotNull int year, Survey survey) {
+    @OneToMany(mappedBy = "surveyEdition", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Subject> subjects;
+
+
+    public SurveyEdition(Long id, LocalDate creationDate, LocalDate startDate, @NotNull int year, Survey survey, List<Subject> subjects) {
         this.id = id;
         this.creationDate = creationDate;
         this.startDate = startDate;
         this.year = year;
         this.survey = survey;
+        this.subjects = subjects;
     }
 
     public SurveyEdition() {
@@ -60,6 +67,10 @@ public class SurveyEdition {
         return this.survey;
     }
 
+    public List<Subject> getSubjects() {
+        return this.subjects;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -78,6 +89,10 @@ public class SurveyEdition {
 
     public void setSurvey(Survey survey) {
         this.survey = survey;
+    }
+
+    public void setSubjects(List<Subject> subjects) {
+        this.subjects = subjects;
     }
 
     public boolean equals(final Object o) {
@@ -99,6 +114,9 @@ public class SurveyEdition {
         final Object this$survey = this.getSurvey();
         final Object other$survey = other.getSurvey();
         if (this$survey == null ? other$survey != null : !this$survey.equals(other$survey)) return false;
+        final Object this$subjects = this.getSubjects();
+        final Object other$subjects = other.getSubjects();
+        if (this$subjects == null ? other$subjects != null : !this$subjects.equals(other$subjects)) return false;
         return true;
     }
 
@@ -118,10 +136,12 @@ public class SurveyEdition {
         result = result * PRIME + this.getYear();
         final Object $survey = this.getSurvey();
         result = result * PRIME + ($survey == null ? 43 : $survey.hashCode());
+        final Object $subjects = this.getSubjects();
+        result = result * PRIME + ($subjects == null ? 43 : $subjects.hashCode());
         return result;
     }
 
     public String toString() {
-        return "SurveyEdition(id=" + this.getId() + ", creationDate=" + this.getCreationDate() + ", startDate=" + this.getStartDate() + ", year=" + this.getYear() + ", survey=" + this.getSurvey() + ")";
+        return "SurveyEdition(id=" + this.getId() + ", creationDate=" + this.getCreationDate() + ", startDate=" + this.getStartDate() + ", year=" + this.getYear() + ", survey=" + this.getSurvey() + ", subjects=" + this.getSubjects() + ")";
     }
 }

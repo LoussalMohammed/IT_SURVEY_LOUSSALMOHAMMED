@@ -2,6 +2,7 @@ package org.itSurvey.survey.survey;
 
 import lombok.RequiredArgsConstructor;
 import org.itSurvey.survey.survey.surveyDTO.RequestSurveyDTO;
+import org.itSurvey.survey.utils.annotation.IdExists;
 import org.itSurvey.survey.utils.exception.ResourceNotFoundException;
 import org.itSurvey.survey.survey.surveyDTO.ResponseSurveyDTO;
 import org.itSurvey.survey.survey.surveyDTO.UpdateSurveyDTO;
@@ -52,9 +53,16 @@ public class SurveyController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseSurveyDTO deleteSurveyById(@PathVariable Long id) {
+    public ResponseSurveyDTO deleteSurveyById(@IdExists(entityClass = Survey.class) @PathVariable Long id) {
         logger.info("Deleting Survey By Id: {}", id);
         return surveyService.deleteById(id);
+    }
+
+    @GetMapping("/{id}/results")
+    @ResponseStatus(HttpStatus.FOUND)
+    public ResponseSurveyDTO result(@IdExists(entityClass = Survey.class) @PathVariable Long id) {
+        logger.info("showing survey results");
+        return surveyService.results(id);
     }
 
     @GetMapping("/error")

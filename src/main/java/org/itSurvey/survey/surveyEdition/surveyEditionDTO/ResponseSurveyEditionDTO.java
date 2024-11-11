@@ -4,10 +4,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
+import org.itSurvey.survey.subject.subjectDTO.ResponseSubjectDTO;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public record ResponseSurveyEditionDTO(
+        @NotNull
+        Long id,
         @Temporal(TemporalType.DATE)
         @Column(name = "creation_date")
         LocalDate creationDate,
@@ -18,6 +22,7 @@ public record ResponseSurveyEditionDTO(
 
         @NotNull
         @Column(name = "year")
-        int year
+        int year,
+        List<ResponseSubjectDTO> subjects
 )
 {}

@@ -68,7 +68,9 @@ public class SurveyEditionServiceImpl implements SurveyEditionService {
 
         if(updateSurveyEditionDTO.surveyId() != null) {
             Survey survey = surveyRepository.findByIdOrThrow(updateSurveyEditionDTO.surveyId());
+            existingSurveyEdition.getSurvey().getSurveyEditions().remove(existingSurveyEdition);
             existingSurveyEdition.setSurvey(survey);
+            survey.getSurveyEditions().add(existingSurveyEdition);
         }
 
         surveyEditionRepository.save(existingSurveyEdition);

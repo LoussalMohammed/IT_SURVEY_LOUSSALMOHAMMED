@@ -8,8 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface SurveyRepository extends JpaRepository<Survey, Long> {
     default Survey findByIdOrThrow(Long id) {
         return findById(id)
-                .orElseThrow(() -> {
-                    return new ResourceNotFoundException("Survey Not Found Using Specified id!");
-                });
+                .orElseThrow(() -> new ResourceNotFoundException("Survey Not Found Using Specified id!"));
     }
 }

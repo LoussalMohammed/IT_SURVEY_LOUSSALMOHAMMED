@@ -24,4 +24,12 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now()
         );
     }
+
+    @ExceptionHandler(ValidationException.class)
+    public ErrorDTO validationExceptionHandler(ValidationException ve) {
+        return new ErrorDTO(
+                ve.getMessage(),
+                LocalDateTime.now()
+        );
+    }
 }
