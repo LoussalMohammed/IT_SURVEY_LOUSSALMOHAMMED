@@ -12,8 +12,11 @@ import org.itSurvey.survey.answer.answerDTOMapper.RequestAnswerDTOMapper;
 import org.itSurvey.survey.answer.answerDTOMapper.ResponseAnswerDTOMapper;
 import org.itSurvey.survey.question.Question;
 import org.itSurvey.survey.question.QuestionRepository;
+import org.itSurvey.survey.shared.dto.PageDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,12 +45,11 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public List<ResponseAnswerDTO> getAllAnswers() {
+    public PageDTO<ResponseAnswerDTO> getAllAnswers(Pageable pageable) {
         logger.info("Fetching all answers");
-        return answerRepository.findAll()
-                .stream()
-                .map(responseAnswerDTOMapper::toResponseAnswerDTO)
-                .toList();
+        Page<Answer> answerPage = answerRepository.findAll(pageable);
+        Page<ResponseAnswerDTO> responsePage = answerPage.map(responseAnswerDTOMapper::toResponseAnswerDTO);
+        return PageDTO.of(responsePage);
     }
 
     @Override
