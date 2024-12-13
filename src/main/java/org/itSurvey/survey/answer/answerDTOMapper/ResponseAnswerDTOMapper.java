@@ -5,6 +5,8 @@ import org.itSurvey.survey.answer.answerDTO.ResponseAnswerDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+// Response Mapper
+
 @Mapper(componentModel = "spring")
 public interface ResponseAnswerDTOMapper {
     ResponseAnswerDTO toResponseAnswerDTO(Answer answer);

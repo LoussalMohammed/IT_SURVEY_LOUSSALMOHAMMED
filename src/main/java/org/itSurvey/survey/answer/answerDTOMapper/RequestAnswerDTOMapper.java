@@ -5,6 +5,8 @@ import org.itSurvey.survey.answer.answerDTO.RequestAnswerDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+// Request Mapper
+
 @Mapper(componentModel = "spring")
 public interface RequestAnswerDTOMapper {
     @Mapping(target = "question", ignore = true)
