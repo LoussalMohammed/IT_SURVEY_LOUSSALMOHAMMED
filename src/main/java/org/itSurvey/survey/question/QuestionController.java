@@ -6,17 +6,23 @@ import org.itSurvey.survey.question.questionDTO.CountDTO;
 import org.itSurvey.survey.question.questionDTO.RequestQuestionDTO;
 import org.itSurvey.survey.question.questionDTO.ResponseQuestionDTO;
 import org.itSurvey.survey.question.questionDTO.UpdateQuestionDTO;
+import org.itSurvey.survey.shared.dto.PageDTO;
 import org.itSurvey.survey.subject.Subject;
 import org.itSurvey.survey.utils.annotation.IdExists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.itSurvey.survey.shared.constant.ApiConstants.DEFAULT_SORT_FIELD;
+
 @RestController
-@RequestMapping("/api/v1/questions")
+@RequestMapping("/question")
 @RequiredArgsConstructor
 public class QuestionController {
     private final QuestionService questionService;
@@ -29,19 +35,27 @@ public class QuestionController {
         return questionService.createQuestion(requestQuestionDTO);
     }
 
-    @GetMapping
-    public List<ResponseQuestionDTO> getAllQuestions() {
+    @GetMapping("/page/{page}/size/{size}")
+    @ResponseStatus(HttpStatus.OK)
+    public PageDTO<ResponseQuestionDTO> getAllQuestions(
+            @PathVariable int page,
+            @PathVariable int size,
+            @RequestParam(defaultValue = DEFAULT_SORT_FIELD) String sort
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
         logger.info("Fetching all questions");
-        return questionService.getAllQuestions();
+        return questionService.getAllQuestions(pageable);
     }
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseQuestionDTO getQuestionById(@PathVariable @IdExists(entityClass = Question.class) Long id) {
         logger.info("Fetching question with id: {}", id);
         return questionService.getQuestionById(id);
     }
 
     @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseQuestionDTO updateQuestionById(
             @RequestBody UpdateQuestionDTO updateQuestionDTO,
             @PathVariable @IdExists(entityClass = Question.class) Long id) {
@@ -63,11 +77,12 @@ public class QuestionController {
         return questionService.getQuestionsBySubjectId(subjectId);
     }
 
-    @GetMapping("/question/{questionId}/answers/{answersIds}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @GetMapping("/participate/question/{questionId}/answers/{answersIds}")
+    @ResponseStatus(HttpStatus.OK)
     public CountDTO answerQuestion(
             @PathVariable @IdExists(entityClass = Question.class) Long questionId,
             @PathVariable List<Long> answersIds) {
         return  questionService.answerQuestionById(questionId, answersIds);
     }
+
 }

@@ -1,6 +1,6 @@
 package org.itSurvey.survey.question;
 
-import org.itSurvey.survey.utils.exception.ResourceNotFoundException;
+import org.itSurvey.survey.shared.exception.ResourceNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

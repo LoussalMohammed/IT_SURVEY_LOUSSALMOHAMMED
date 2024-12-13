@@ -15,11 +15,14 @@ import org.itSurvey.survey.question.questionDTO.ResponseQuestionDTO;
 import org.itSurvey.survey.question.questionDTO.UpdateQuestionDTO;
 import org.itSurvey.survey.question.questionDTOMapper.RequestQuestionDTOMapper;
 import org.itSurvey.survey.question.questionDTOMapper.ResponseQuestionDTOMapper;
+import org.itSurvey.survey.shared.dto.PageDTO;
+import org.itSurvey.survey.shared.exception.InvalidRelationshipException;
 import org.itSurvey.survey.subject.Subject;
 import org.itSurvey.survey.subject.SubjectRepository;
 import org.itSurvey.survey.utils.enums.QuestionType;
-import org.itSurvey.survey.utils.exception.ValidationException;
 import org.itSurvey.survey.utils.validation.SubjectValidator;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -60,12 +63,11 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<ResponseQuestionDTO> getAllQuestions() {
+    public PageDTO<ResponseQuestionDTO> getAllQuestions(Pageable pageable) {
         log.info("Fetching all questions");
-        return questionRepository.findAll()
-                .stream()
-                .map(responseQuestionDTOMapper::toResponseQuestionDTO)
-                .toList();
+        Page<Question> questionPage = questionRepository.findAll(pageable);
+        Page<ResponseQuestionDTO> responsePage = questionPage.map(responseQuestionDTOMapper::toResponseQuestionDTO);
+        return PageDTO.of(responsePage);
     }
 
     @Override
@@ -116,19 +118,26 @@ public class QuestionServiceImpl implements QuestionService {
 
         if(question.getQuestionType().equals(QuestionType.SINGLE_CHOICE)) {
             Answer answer = answers.getFirst();
-            question.setAnswerCount(question.getAnswerCount() != null ? question.getAnswerCount()+1 : 1);
-            answer.setSelectionCount(answer.getSelectionCount() != null ? answer.getSelectionCount()+1 : 1);
-            countDTO = new  CountDTO(
-                    question.getText(),
-                    question.getAnswerCount(),
-                    List.of(responseAnswerDTOMapper.toResponseAnswerDTO(answer))
-            );
+            if(question.getAnswers().contains(answer)) {
+                question.setAnswerCount(question.getAnswerCount() != null ? question.getAnswerCount()+1 : 1);
+                answer.setSelectionCount(answer.getSelectionCount() != null ? answer.getSelectionCount()+1 : 1);
+                countDTO = new  CountDTO(
+                        question.getText(),
+                        question.getAnswerCount(),
+                        List.of(responseAnswerDTOMapper.toResponseAnswerDTO(answer))
+                );
+            } else {
+                throw new InvalidRelationshipException("This answer is not related to the question!");
+            }
+
         }
         else    {
             answers.forEach((answer) -> {
                 if(question.getAnswers().contains(answer)) {
                     question.setAnswerCount(question.getAnswerCount() != null ? question.getAnswerCount()+1 : 1);
                     answer.setSelectionCount(answer.getSelectionCount() != null ? answer.getSelectionCount()+1 : 1);
+                } else {
+                    throw new InvalidRelationshipException("This answer is not related to the question!");
                 }
 
             });
