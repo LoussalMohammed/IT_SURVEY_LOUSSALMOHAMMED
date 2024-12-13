@@ -7,6 +7,7 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = {ResponseSubjectDTOMapper.class})
 public interface ResponseOwnerDTOMapper {
+
     ResponseOwnerDTO toResponseOwnerDTO(Owner owner);
     Owner toOwner(ResponseOwnerDTO responseOwnerDTO);
 }
