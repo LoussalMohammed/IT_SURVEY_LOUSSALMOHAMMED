@@ -3,6 +3,8 @@ package org.itSurvey.survey.answer;
 import jakarta.persistence.*;
 import org.itSurvey.survey.question.Question;
 
+// Answer
+
 @Entity(name = "Answer")
 @Table(name = "answers")
 public class Answer {
